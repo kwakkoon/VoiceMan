@@ -14,16 +14,34 @@ namespace VoiceMan
     /// <summary>
     /// Action Class
     ///  - AudioPlay
-    ///  - CreateDirectory
+    ///  - AudioStop
+    ///  
+    ///  - DirectoryCreate
+    ///  
+    ///  - LangSelect
+    ///  - BtnSelect
     /// </summary>
+
     class Action
     {
-        public void AudioPlay(string currentLang, string btnName)
-        {
-            string filePath = Directory.GetCurrentDirectory();
-            string _filePath = @"\audio\";
+        MediaPlayer.MediaPlayerClass player = new MediaPlayer.MediaPlayerClass();
 
-            switch(currentLang)
+        public void AudioPlay(string theFileName)
+        {
+            player.FileName = theFileName;
+            player.Play();
+            
+            
+        }
+
+        public void AudioStop()
+        {
+            player.Stop();
+        }
+
+        public string LangSelect(string currentLang)
+        {
+            switch (currentLang)
             {
                 case "한국어":
                     currentLang = "kor";
@@ -41,31 +59,53 @@ namespace VoiceMan
                     currentLang = "ch";
                     break;
 
+                default:
+                    currentLang = "kor";
+                    break;
             }
-            
-            filePath += @"\"+currentLang;
-            filePath += @"\123.mp3";
-
-            WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
-            
-            if (btnName != "StopBTN")
-            {
-                //주소 받기
-
-
-                //주소 지정
-                wplayer.URL = filePath;
-                wplayer.controls.play();
-            }
-            else
-            {
-                wplayer.controls.stop();
-            }
+            return currentLang;
         }
-        
-        public void CreateDirectory()
+
+        public string BtnSelect(string btnName)
         {
-            
+            string btnNumber = null;
+
+            switch(btnName)
+            {
+                case "btn1":
+                    btnNumber = "1";
+                    break;
+                case "btn2":
+                    btnNumber = "2";
+                    break;
+                case "btn3":
+                    btnNumber = "3";
+                    break;
+                case "btn4":
+                    btnNumber = "4";
+                    break;
+                case "btn5":
+                    btnNumber = "5";
+                    break;
+                case "btn6":
+                    btnNumber = "6";
+                    break;
+                case "btn7":
+                    btnNumber = "7";
+                    break;
+                case "btn8":
+                    btnNumber = "8";
+                    break;
+            }
+            return btnNumber;
         }
+
+        public void DirectoryCreate(string directoryPath)
+        {
+            DirectoryInfo dir = new DirectoryInfo(directoryPath);
+            if (dir.Exists == false)
+                dir.Create();
+        }
+
     }
 }
