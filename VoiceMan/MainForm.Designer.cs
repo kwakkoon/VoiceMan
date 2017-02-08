@@ -95,6 +95,7 @@
             // 
             // LangCombo
             // 
+            this.LangCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.LangCombo.Items.AddRange(new object[] {
             "한국어",
             "일본어",
@@ -102,7 +103,6 @@
             "영어"});
             this.LangCombo.Name = "LangCombo";
             this.LangCombo.Size = new System.Drawing.Size(121, 28);
-            this.LangCombo.Text = "한국어";
             this.LangCombo.SelectedIndexChanged += new System.EventHandler(this.LangCombo_SelectedIndexChanged);
             // 
             // 도움말ToolStripMenuItem

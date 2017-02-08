@@ -19,11 +19,11 @@ namespace VoiceMan
         string Dia_filePath = null;
         string CurrLang = "한국어";    // default 언어 한국어
         string CurrDirectory = Directory.GetCurrentDirectory();
-        
+
         public MainForm()
         {
             InitializeComponent();
-
+            LangCombo.Text = "한국어";
         }
 
         private void LangCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -32,8 +32,10 @@ namespace VoiceMan
             CurrLang = LangCombo.SelectedItem.ToString();
         }
 
-        private void AudioBTN_Click(object sender, EventArgs e) 
+        private void AudioBTN_Click(object sender, EventArgs e)
         {
+            MF_Action.AudioStop();//실행중인 파일 정지
+
             //선택된 버튼 지정 1
             Button btn = sender as Button;
             
@@ -59,14 +61,17 @@ namespace VoiceMan
                     MF_Action.DirectoryCreate(CurrDirectory);
 
                     Dia_filePath = OpenFile.FileName;
-                    
                     /*
-                    if(File.Exists(theFileName)==true)
-                    {
+                    DirectoryInfo fileEX = new DirectoryInfo(theFileName);
+                    
+                    if (fileEX.Exists == true)
+                    { 
+                        File.SetAttributes(theFileName, FileAttributes.Normal);
                         File.Delete(theFileName);
                     }
                     */
                     File.Copy(Dia_filePath, theFileName, true);
+                    File.SetAttributes(theFileName, FileAttributes.Normal);
                 }
             }
             else
@@ -89,6 +94,8 @@ namespace VoiceMan
 
         private void 녹음파일변경ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MF_Action.AudioStop();
+
             CurrLang = MF_Action.LangSelect(CurrLang);
             CurrDirectory = Path.Combine(Directory.GetCurrentDirectory(), "audio", CurrLang);
             
@@ -99,14 +106,26 @@ namespace VoiceMan
 
             if (OpenFiles.ShowDialog()==DialogResult.OK)
             {
-                MF_Action.DirectoryCreate(CurrDirectory);
                 int FileIndex = OpenFiles.FileNames.Length;
-                string theFileName = null;
-                
-                for(int i=1;i<=FileIndex;i++)
+                if (FileIndex > 8)
                 {
-                    theFileName = i + ".mp3";
-                    File.Copy(OpenFiles.FileNames[i-1], Path.Combine(CurrDirectory, theFileName), true);
+                    MessageBox.Show("선택된 파일 개수가 너무 많습니다.\n8개까지 설정가능합니다.");
+                }
+                else
+                {
+                    MF_Action.DirectoryCreate(CurrDirectory);
+                    string theFileName = null;
+                    int temp;
+
+                    for (int i = 0; i < FileIndex; i++)
+                    {
+                        temp = i + 1;
+                        theFileName = temp.ToString() + ".mp3";
+                        theFileName = Path.Combine(CurrDirectory, theFileName);
+
+                        File.Copy(OpenFiles.FileNames[i], theFileName, true);
+                        File.SetAttributes(theFileName, FileAttributes.Normal);
+                    }
                 }
             }
         }

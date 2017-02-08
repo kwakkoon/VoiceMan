@@ -30,8 +30,6 @@ namespace VoiceMan
         {
             player.FileName = theFileName;
             player.Play();
-            
-            
         }
 
         public void AudioStop()
