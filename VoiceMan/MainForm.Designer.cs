@@ -222,6 +222,7 @@
             this.MainMenuStrip = this.MF_menuStrip;
             this.Name = "MainForm";
             this.Text = "VoiceMan";
+            this.TopMost = true;
             this.MF_menuStrip.ResumeLayout(false);
             this.MF_menuStrip.PerformLayout();
             this.ResumeLayout(false);

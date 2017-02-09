@@ -40,7 +40,7 @@ namespace VoiceMan
             Button btn = sender as Button;
             
             //선택된 언어
-            CurrLang = MF_Action.LangSelect(CurrLang);
+            CurrLang = MF_Action.LangSelect(LangCombo.Text);
             CurrDirectory = Path.Combine(Directory.GetCurrentDirectory(), "audio" ,CurrLang);
 
             //선택된 버튼 지정 2 -> 파일경로 설정
@@ -70,6 +70,8 @@ namespace VoiceMan
                         File.Delete(theFileName);
                     }
                     */
+                    File.Delete(theFileName);
+
                     File.Copy(Dia_filePath, theFileName, true);
                     File.SetAttributes(theFileName, FileAttributes.Normal);
                 }
@@ -96,7 +98,7 @@ namespace VoiceMan
         {
             MF_Action.AudioStop();
 
-            CurrLang = MF_Action.LangSelect(CurrLang);
+            CurrLang = MF_Action.LangSelect(LangCombo.Text);
             CurrDirectory = Path.Combine(Directory.GetCurrentDirectory(), "audio", CurrLang);
             
             OpenFileDialog OpenFiles = new OpenFileDialog();
@@ -104,12 +106,14 @@ namespace VoiceMan
             OpenFiles.Filter = "녹음 파일 (*.mp3;*.wav;)|*.mp3;*.wav|" +
                             "All files (*.*)|*.*";
 
+            reDialogStart:
             if (OpenFiles.ShowDialog()==DialogResult.OK)
             {
-                int FileIndex = OpenFiles.FileNames.Length;
-                if (FileIndex > 8)
+                int FilesIndex = OpenFiles.FileNames.Length;
+                if (FilesIndex > 8)
                 {
                     MessageBox.Show("선택된 파일 개수가 너무 많습니다.\n8개까지 설정가능합니다.");
+                    goto reDialogStart;
                 }
                 else
                 {
@@ -117,11 +121,15 @@ namespace VoiceMan
                     string theFileName = null;
                     int temp;
 
-                    for (int i = 0; i < FileIndex; i++)
+                    for (int i = 0; i < FilesIndex; i++)
                     {
+                        theFileName = null;
                         temp = i + 1;
                         theFileName = temp.ToString() + ".mp3";
                         theFileName = Path.Combine(CurrDirectory, theFileName);
+
+                        
+                        File.Delete(theFileName);
 
                         File.Copy(OpenFiles.FileNames[i], theFileName, true);
                         File.SetAttributes(theFileName, FileAttributes.Normal);
@@ -142,7 +150,7 @@ namespace VoiceMan
 
         private void 녹음파일보기ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrLang = MF_Action.LangSelect(CurrLang);
+            CurrLang = MF_Action.LangSelect(LangCombo.Text);
             string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "audio", CurrLang);
             
             Process.Start(dirPath);
