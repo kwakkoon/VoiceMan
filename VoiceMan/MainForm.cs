@@ -31,11 +31,9 @@ namespace VoiceMan
             //녹음 파일 Path 파일 경로 설정 (언어선택)
             CurrLang = LangCombo.SelectedItem.ToString();
         }
-
+        Process[] mprocess = null;
         private void AudioBTN_Click(object sender, EventArgs e)
         {
-            MF_Action.AudioStop();//실행중인 파일 정지
-
             //선택된 버튼 지정 1
             Button btn = sender as Button;
             
@@ -50,6 +48,11 @@ namespace VoiceMan
             theFileName += ".mp3";
             theFileName = Path.Combine(CurrDirectory, theFileName);
 
+            MF_Action.AudioStop();
+            ProcessKill(theFileName);
+
+            mprocess = Process.GetProcessesByName(theFileName);
+
             if (FileChangeCBox.Checked == true) //파일수정 체크 확인
             {
                 OpenFileDialog OpenFile = new OpenFileDialog();
@@ -59,7 +62,7 @@ namespace VoiceMan
                 if (OpenFile.ShowDialog()==DialogResult.OK)
                 {
                     MF_Action.DirectoryCreate(CurrDirectory);
-
+                    
                     Dia_filePath = OpenFile.FileName;
                     /*
                     DirectoryInfo fileEX = new DirectoryInfo(theFileName);
@@ -70,8 +73,13 @@ namespace VoiceMan
                         File.Delete(theFileName);
                     }
                     */
-                    File.Delete(theFileName);
+                    FileInfo currmusic = new FileInfo(theFileName);
+                    if(File.Exists(theFileName))
+                    { 
+                        currmusic.IsReadOnly = false;
 
+                        File.Delete(theFileName);
+                    }
                     File.Copy(Dia_filePath, theFileName, true);
                     File.SetAttributes(theFileName, FileAttributes.Normal);
                 }
@@ -127,7 +135,6 @@ namespace VoiceMan
                         temp = i + 1;
                         theFileName = temp.ToString() + ".mp3";
                         theFileName = Path.Combine(CurrDirectory, theFileName);
-
                         
                         File.Delete(theFileName);
 
@@ -154,6 +161,18 @@ namespace VoiceMan
             string dirPath = Path.Combine(Directory.GetCurrentDirectory(), "audio", CurrLang);
             
             Process.Start(dirPath);
+            
+        }
+        
+        private void ProcessKill(string filename)
+        {
+            Process[] process = Process.GetProcessesByName(filename);
+            Process currentProcess = Process.GetCurrentProcess();
+            foreach (Process p in process)
+            {
+                if (p.Id != currentProcess.Id)
+                    p.Kill();
+            }
         }
     }
 }
