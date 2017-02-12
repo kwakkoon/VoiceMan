@@ -34,6 +34,7 @@ namespace VoiceMan
         public void AudioStop()
         {
             player.Stop();
+            player.FileName = null;
         }
 
         public string LangSelect(string currentLang)

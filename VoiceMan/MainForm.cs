@@ -24,6 +24,7 @@ namespace VoiceMan
         {
             InitializeComponent();
             LangCombo.Text = "한국어";
+            
         }
 
         private void LangCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -35,8 +36,8 @@ namespace VoiceMan
         private void AudioBTN_Click(object sender, EventArgs e)
         {
             //선택된 버튼 지정 1
-            Button btn = sender as Button;
-            
+            PictureBox btn = sender as PictureBox;
+
             //선택된 언어
             CurrLang = MF_Action.LangSelect(LangCombo.Text);
             CurrDirectory = Path.Combine(Directory.GetCurrentDirectory(), "audio" ,CurrLang);
@@ -49,9 +50,6 @@ namespace VoiceMan
             theFileName = Path.Combine(CurrDirectory, theFileName);
 
             MF_Action.AudioStop();
-            ProcessKill(theFileName);
-
-            mprocess = Process.GetProcessesByName(theFileName);
 
             if (FileChangeCBox.Checked == true) //파일수정 체크 확인
             {
@@ -61,26 +59,20 @@ namespace VoiceMan
 
                 if (OpenFile.ShowDialog()==DialogResult.OK)
                 {
+                    FileChangeCBox.Checked = false;
                     MF_Action.DirectoryCreate(CurrDirectory);
                     
                     Dia_filePath = OpenFile.FileName;
-                    /*
-                    DirectoryInfo fileEX = new DirectoryInfo(theFileName);
-                    
-                    if (fileEX.Exists == true)
-                    { 
-                        File.SetAttributes(theFileName, FileAttributes.Normal);
-                        File.Delete(theFileName);
-                    }
-                    */
+
                     FileInfo currmusic = new FileInfo(theFileName);
                     if(File.Exists(theFileName))
-                    { 
-                        currmusic.IsReadOnly = false;
+                    {
+                        File.SetAttributes(theFileName, FileAttributes.Normal);
 
                         File.Delete(theFileName);
+                        
                     }
-                    File.Copy(Dia_filePath, theFileName, true);
+                    File.Copy(Dia_filePath, theFileName);
                     File.SetAttributes(theFileName, FileAttributes.Normal);
                 }
             }
@@ -163,15 +155,22 @@ namespace VoiceMan
             Process.Start(dirPath);
             
         }
-        
-        private void ProcessKill(string filename)
+
+        //PictureBox 마우스 이벤트 크기 조절
+        private void Pbox_MouseEnter(object sender, EventArgs e)
         {
-            Process[] process = Process.GetProcessesByName(filename);
-            Process currentProcess = Process.GetCurrentProcess();
-            foreach (Process p in process)
+            Control ctl = sender as Control;
+            if (ctl != null)
             {
-                if (p.Id != currentProcess.Id)
-                    p.Kill();
+                ctl.Size = new Size(85, 65);
+            }
+        }
+        private void Pbox_MouseLeave(object sender, EventArgs e)
+        {
+            Control ctl = sender as Control;
+            if (ctl != null)
+            {
+                ctl.Size = new Size(70, 50);
             }
         }
     }
